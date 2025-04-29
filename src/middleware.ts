@@ -26,26 +26,35 @@ const authMiddleware = withAuth(
   }
 );
 
-export default function middleware(req: NextRequest) {
+export default function middleware(reqest: NextRequest) {
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || '';
+
   const publicPathnameRegex = RegExp(
     `^(/(${routing.locales.join('|')}))?(${publicPages
       .flatMap((p) => (p === '/' ? ['', '/'] : p))
       .join('|')})/?$`,
     'i'
   );
+
+  const req = new NextRequest(baseUrl);
+
+  console.log('reqest', reqest);
+
+  console.log('req', req);
+
   const isPublicPage = publicPathnameRegex.test(req.nextUrl.pathname);
 
   if (isPublicPage) {
-    console.log('сработал: intlMiddleware', req.headers.get('origin'));
+    // console.log('сработал: intlMiddleware', req);
     const newReq = intlMiddleware(req);
-    console.log('newReq', newReq.url);
+    // console.log('newReq', newReq);
 
     return newReq;
   } else {
-    console.log('сработал: authMiddleware', req.headers.get('origin'));
+    // console.log('сработал: authMiddleware', req.headers.get('origin'));
     const newReq = (authMiddleware as any)(req);
 
-    console.log('newReq', newReq.url);
+    // console.log('newReq', newReq.url);
 
     return newReq;
   }
