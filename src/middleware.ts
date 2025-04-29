@@ -36,7 +36,7 @@ export default function middleware(reqest: NextRequest) {
     'i'
   );
 
-  const req = new NextRequest(baseUrl);
+  const req = new NextRequest(`${baseUrl}/en`);
 
   console.log('reqest', reqest);
 
