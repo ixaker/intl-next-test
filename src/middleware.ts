@@ -36,9 +36,18 @@ export default function middleware(req: NextRequest) {
   const isPublicPage = publicPathnameRegex.test(req.nextUrl.pathname);
 
   if (isPublicPage) {
-    return intlMiddleware(req);
+    console.log('сработал: intlMiddleware', req.headers.get('origin'));
+    const newReq = intlMiddleware(req);
+    console.log('newReq', newReq.url);
+
+    return newReq;
   } else {
-    return (authMiddleware as any)(req);
+    console.log('сработал: authMiddleware', req.headers.get('origin'));
+    const newReq = (authMiddleware as any)(req);
+
+    console.log('newReq', newReq.url);
+
+    return newReq;
   }
 }
 
