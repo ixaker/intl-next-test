@@ -26,8 +26,23 @@ const authMiddleware = withAuth(
   }
 );
 
-export default function middleware(reqest: NextRequest) {
+export default function middleware(request: NextRequest) {
   const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || '';
+
+  const fixedUrl = request.nextUrl.clone();
+
+  // Заменим 127.0.0.1 или localhost на домен
+  const fixedHost = baseUrl.replace(/^https?:\/\//, '').replace(/\/$/, '');
+  fixedUrl.host = fixedHost;
+  fixedUrl.hostname = fixedHost;
+
+  // Создаём "новый" запрос с правильным URL
+  const fixedRequest = new NextRequest(fixedUrl, {
+    headers: request.headers,
+    method: request.method,
+    body: request.body,
+    duplex: 'half'
+  });
 
   const publicPathnameRegex = RegExp(
     `^(/(${routing.locales.join('|')}))?(${publicPages
@@ -36,23 +51,21 @@ export default function middleware(reqest: NextRequest) {
     'i'
   );
 
-  const req = new NextRequest(`${baseUrl}/en`);
+  console.log('originalRequest', request);
 
-  console.log('reqest', reqest);
+  console.log('fixedRequest', fixedRequest);
 
-  console.log('req', req);
-
-  const isPublicPage = publicPathnameRegex.test(req.nextUrl.pathname);
+  const isPublicPage = publicPathnameRegex.test(fixedRequest.nextUrl.pathname);
 
   if (isPublicPage) {
     // console.log('сработал: intlMiddleware', req);
-    const newReq = intlMiddleware(req);
+    const newReq = intlMiddleware(fixedRequest);
     // console.log('newReq', newReq);
 
     return newReq;
   } else {
     // console.log('сработал: authMiddleware', req.headers.get('origin'));
-    const newReq = (authMiddleware as any)(req);
+    const newReq = (authMiddleware as any)(fixedRequest);
 
     // console.log('newReq', newReq.url);
 
