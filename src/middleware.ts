@@ -35,6 +35,7 @@ export default function middleware(request: NextRequest) {
   const fixedHost = baseUrl.replace(/^https?:\/\//, '').replace(/\/$/, '');
   fixedUrl.host = fixedHost;
   fixedUrl.hostname = fixedHost;
+  fixedUrl.port = '';
 
   // Создаём "новый" запрос с правильным URL
   const fixedRequest = new NextRequest(fixedUrl, {
