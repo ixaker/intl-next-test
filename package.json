@@ -6,7 +6,7 @@
     "lint": "eslint src && tsc && prettier src --check",
     "test": "playwright test",
     "build": "next build",
-    "start": "next start --port=3000 --hostname=127.1.4.56"
+    "start": "next start"
   },
   "dependencies": {
     "next": "^15.3.0",
