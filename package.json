@@ -6,7 +6,7 @@
     "lint": "eslint src && tsc && prettier src --check",
     "test": "playwright test",
     "build": "next build",
-    "start": "next start"
+    "start": "next start -p $PORT"
   },
   "dependencies": {
     "next": "^15.3.0",
